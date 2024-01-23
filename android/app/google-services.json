@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "544995961689",
+    "project_id": "connectfriends-4f495",
+    "storage_bucket": "connectfriends-4f495.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544995961689:android:cfa2b004528a18c37fba48",
+        "android_client_info": {
+          "package_name": "com.example.connect_friends"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAq_-4sCZtX3lG_6_yByFMGPPqBI-BMIG8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
