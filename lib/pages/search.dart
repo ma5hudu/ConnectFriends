@@ -2,6 +2,7 @@ import 'dart:html';
 
 import 'package:connect_friends/model/user_view_model.dart';
 import 'package:connect_friends/model/users_.dart';
+import 'package:connect_friends/pages/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,14 +15,14 @@ class SearchUsers extends StatefulWidget {
 }
 
 class _SearchUsersState extends State<SearchUsers> {
-   TextEditingController _searchController = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
 
   late Future resultsLoaded;
   List _allResults = [];
   List _resultsList = [];
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
   }
@@ -33,13 +34,13 @@ class _SearchUsersState extends State<SearchUsers> {
     super.dispose();
   }
 
-    @override
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     resultsLoaded = getUsersNameStreamSnapshots();
   }
 
-  _onSearchChanged(){
+  _onSearchChanged() {
     searchResultsList();
   }
 
@@ -57,8 +58,7 @@ class _SearchUsersState extends State<SearchUsers> {
       }
     } else {
       showResults = _allResults
-          .where(
-              (user) => user.uid != FirebaseAuth.instance.currentUser?.uid)
+          .where((user) => user.uid != FirebaseAuth.instance.currentUser?.uid)
           .toList();
     }
     setState(() {
@@ -66,7 +66,7 @@ class _SearchUsersState extends State<SearchUsers> {
     });
   }
 
-    getUsersNameStreamSnapshots() async {
+  getUsersNameStreamSnapshots() async {
     // Assuming liftsViewModel is an instance of LiftsViewModel
     await Provider.of<UserViewMode>(context, listen: false).loadUserDetails();
     setState(() {
@@ -76,13 +76,9 @@ class _SearchUsersState extends State<SearchUsers> {
     return "complete";
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
       body: Consumer<UserViewMode>(builder: (context, userModel, child) {
         if (userModel.users.isEmpty) {
           userModel.loadUserDetails();
@@ -113,8 +109,20 @@ class _SearchUsersState extends State<SearchUsers> {
                       itemCount: _resultsList.length,
                       itemBuilder: (context, index) {
                         final user = _resultsList[index];
-                        return ListTile(
-                          title: Text("${user.name} ${user.surname}"),
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (context) {
+                              return const UserProfile();
+                            }));
+                          },
+                          child: ListTile(
+                            title: Text(
+                              "${user.name} ${user.surname}",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16.0),
+                            ),
+                          ),
                         );
                       }),
                 )
