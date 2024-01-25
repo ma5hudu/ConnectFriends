@@ -1,43 +1,32 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connect_friends/model/users_.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
+class UserViewMode extends ChangeNotifier {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-class UserOperations {
-  static Future<void> registerUser({
-    required String name,
-    required String surname,
-    required String email,
-    required String password,
-    required String confirmPassword,
-  }) async {
-    if (password == confirmPassword) {
-      try {
-        FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-        UserCredential userCredential =
-            await _firebaseAuth.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
+  List<Users> _user = [];
+  List<Users> get users => _user;
+
+  Future<void> loadUserDetails() async {
+    try {
+      final QuerySnapshot<Map<String, dynamic>> snapshot =
+          await _firestore.collection('users').get();
+      _user =
+          snapshot.docs.map((QueryDocumentSnapshot<Map<String, dynamic>> doc) {
+        final data = doc.data();
+        return Users(
+          uid: doc.id,
+          name: data['name'] as String,
+          surname: data['surname'] as String,
+          email: data['email'] as String,
+          profilePicture: data['profilePicture'] as String,
         );
-
-        Users currentUser = Users(
-          uid: userCredential.user!.uid,
-          name: name,
-          surname: surname,
-          email: email,
-          profilePicture: '', // Set based on your logic
-        );
-
-        await currentUser.storeUserData();
-
-        // Registration successful
-        print('User registered successfully');
-      } catch (e) {
-        // Handle registration errors
-        print('Error during registration: $e');
-      }
-    } else {
-      // Passwords do not match
-      print('Passwords do not match');
+      }).toList();
+      notifyListeners();
+    } catch (exception) {
+      print('Error loading users: $exception');
     }
   }
 }

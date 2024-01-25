@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connect_friends/homePage.dart';
 import 'package:connect_friends/model/user_view_model.dart';
+import 'package:connect_friends/model/users_.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -27,6 +28,40 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return const HomePage();
     }));
+  }
+
+  Future<void> _registerUser() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        // Perform user registration and send email verification
+        UserCredential userCredential =
+            await _firebaseAuth.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+
+        // Create an instance of Users with user details
+        Users currentUser = Users(
+          uid: userCredential.user!.uid,
+          name: _nameController.text.trim(),
+          surname: _surnameController.text.trim(),
+          email: _emailController.text.trim(),
+          profilePicture:
+              'url_to_default_profile_picture', // You can replace this with the actual URL or leave it as is
+        );
+
+        // Store user data in Firestore
+        await currentUser.storeUserData();
+
+        // Send verification email
+        await userCredential.user!.sendEmailVerification();
+      
+
+        _openHomePage(context);
+      } catch (e) {
+        print('Error during registration: $e');
+      }
+    }
   }
 
   @override
@@ -164,36 +199,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
               ElevatedButton(
                   onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      try {
-                      // Perform user registration and send email verification
-                      UserCredential userCredential =
-                          await _firebaseAuth.createUserWithEmailAndPassword(
-                        email: _emailController.text.trim(),
-                        password: _passwordController.text.trim(),
-                      );
-
-                      // Send verification email
-                      await userCredential.user!.sendEmailVerification();
-
-                      // Register user and store data
-                      await UserOperations.registerUser(
-                        name: _nameController.text.trim(),
-                        surname: _surnameController.text.trim(),
-                        email: _emailController.text.trim(),
-                        password: _passwordController.text.trim(),
-                        confirmPassword: _confirmPasswordController.text.trim(),
-                      );
-
-                      // Uncomment this line if you want to navigate to the home page after registration
-                      _openHomePage(context);
-                    } catch (e) {
-                      // Handle registration errors
-                      print('Error during registration: $e');
-                    
-                    }
-                    }
-                    // _openHomePage(context);
+                    _registerUser();
                   },
                   child: const Text(
                     'Register',

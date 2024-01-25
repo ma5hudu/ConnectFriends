@@ -6,13 +6,16 @@ class Users{
   final String surname;
   final String email;
   final String profilePicture;
+  // bool emailVerified;
 
   Users({
     required this.uid,
     required this.name,
     required this.surname,
     required this.email, 
-    required this.profilePicture
+    required this.profilePicture,
+    // this.emailVerified = false,
+
     });
 
     Map<String, Object?> toJson(){
@@ -34,6 +37,9 @@ class Users{
     } catch (e) {
       print('Error storing user data: $e');
     }
+
   }
+
+
 }
 
