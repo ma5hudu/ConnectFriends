@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home Page'),
-         backgroundColor: Color.fromARGB(255, 64, 190, 195),
+        backgroundColor: Color.fromARGB(255, 64, 190, 195),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                     Navigator.of(context).push(
+                    Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) {
                           return ChangeNotifierProvider(
@@ -44,23 +44,22 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                        Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return ChangeNotifierProvider(
-                          create: (context) => UserViewMode(),
-                          child: const SearchUsers(),
-                        );
-                      },
-                    ),
-                  );
-
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ChangeNotifierProvider(
+                            create: (context) => UserViewMode(),
+                            child: const SearchUsers(),
+                          );
+                        },
+                      ),
+                    );
                   },
-                  child: Text('Search'),
+                  child: Text('Global users'),
                 ),
               ],
             ),
-           const SizedBox(height: 16.0), // Adjust the space between rows
+            const SizedBox(height: 16.0), // Adjust the space between rows
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

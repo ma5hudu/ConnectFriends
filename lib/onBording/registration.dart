@@ -42,20 +42,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
         // Create an instance of Users with user details
         Users currentUser = Users(
-          uid: userCredential.user!.uid,
-          name: _nameController.text.trim(),
-          surname: _surnameController.text.trim(),
-          email: _emailController.text.trim(),
-          profilePicture:
-              'url_to_default_profile_picture', // You can replace this with the actual URL or leave it as is
-        );
+            uid: userCredential.user!.uid,
+            name: _nameController.text.trim(),
+            surname: _surnameController.text.trim(),
+            email: _emailController.text.trim(),
+            profilePicture: 'url_to_default_profile_picture',
+            friendRequest: [],
+            acceptedFriendRequest: []);
 
         // Store user data in Firestore
         await currentUser.storeUserData();
 
         // Send verification email
         await userCredential.user!.sendEmailVerification();
-      
 
         _openHomePage(context);
       } catch (e) {
@@ -69,7 +68,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registration'),
-         backgroundColor: Color.fromARGB(255, 64, 190, 195),
+        backgroundColor: Color.fromARGB(255, 64, 190, 195),
       ),
       body: Center(
         child: Form(
