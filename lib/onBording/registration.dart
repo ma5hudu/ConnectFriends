@@ -69,6 +69,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registration'),
+         backgroundColor: Color.fromARGB(255, 64, 190, 195),
       ),
       body: Center(
         child: Form(

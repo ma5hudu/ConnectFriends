@@ -2,7 +2,8 @@ import 'dart:html';
 
 import 'package:connect_friends/model/user_view_model.dart';
 import 'package:connect_friends/model/users_.dart';
-import 'package:connect_friends/pages/profile.dart';
+import 'package:connect_friends/pages/friend_profile.dart';
+import 'package:connect_friends/pages/my_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -68,7 +69,7 @@ class _SearchUsersState extends State<SearchUsers> {
 
   getUsersNameStreamSnapshots() async {
     // Assuming liftsViewModel is an instance of LiftsViewModel
-    await Provider.of<UserViewMode>(context, listen: false).loadUserDetails();
+    await Provider.of<UserViewMode>(context, listen: false).loadRegisterdUser();
     setState(() {
       _allResults = Provider.of<UserViewMode>(context, listen: false).users;
     });
@@ -79,9 +80,13 @@ class _SearchUsersState extends State<SearchUsers> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Global Users"),
+        backgroundColor: Color.fromARGB(255, 64, 190, 195),
+      ),
       body: Consumer<UserViewMode>(builder: (context, userModel, child) {
         if (userModel.users.isEmpty) {
-          userModel.loadUserDetails();
+          userModel.loadRegisterdUser();
           return const Center(
             child: CircularProgressIndicator(),
           );
@@ -111,10 +116,16 @@ class _SearchUsersState extends State<SearchUsers> {
                         final user = _resultsList[index];
                         return GestureDetector(
                           onTap: () {
-                            Navigator.of(context)
-                                .push(MaterialPageRoute(builder: (context) {
-                              return const UserProfile();
-                            }));
+                             Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return ChangeNotifierProvider(
+                                    create: (context) => UserViewMode(),
+                                    child:  OtherUserProfile(selectedUser: user),
+                                  );
+                                },
+                              ),
+                            );
                           },
                           child: ListTile(
                             title: Text(

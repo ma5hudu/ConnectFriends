@@ -18,7 +18,7 @@ class _MyFirstPageState extends State<MyFirstPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        backgroundColor: Colors.grey,
+        backgroundColor: Color.fromARGB(255, 64, 190, 195),
       ),
       body: Center(
           child: Column(
@@ -29,7 +29,7 @@ class _MyFirstPageState extends State<MyFirstPage> {
           ),
           Image.asset(
             "assets/images/logo.png",
-            width:800,
+            width: 800,
             height: 400,
           ),
           const SizedBox(
@@ -48,10 +48,10 @@ class _MyFirstPageState extends State<MyFirstPage> {
       )),
     );
   }
-  _openLoginPage(BuildContext context){
-    Navigator.of(context).push(MaterialPageRoute(builder: (context){
-      return  const SignInPage();
-    }));
 
+  _openLoginPage(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return const SignInPage();
+    }));
   }
 }

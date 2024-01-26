@@ -34,6 +34,7 @@ class _SignInPageState extends State<SignInPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
+         backgroundColor: Color.fromARGB(255, 64, 190, 195),
       ),
       body: Center(
         child: Form(

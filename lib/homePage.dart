@@ -1,5 +1,5 @@
 import 'package:connect_friends/model/user_view_model.dart';
-import 'package:connect_friends/pages/profile.dart';
+import 'package:connect_friends/pages/my_profile.dart';
 import 'package:connect_friends/pages/search.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +17,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home Page'),
+         backgroundColor: Color.fromARGB(255, 64, 190, 195),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -28,10 +29,16 @@ class _HomePageState extends State<HomePage> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                     Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) {
-                      return const UserProfile();
-                    }));
+                     Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ChangeNotifierProvider(
+                            create: (context) => UserViewMode(),
+                            child: const UserProfile(),
+                          );
+                        },
+                      ),
+                    );
                   },
                   child: Text('Profile'),
                 ),
