@@ -49,7 +49,7 @@ class _SignInPageState extends State<SignInPage> {
               ),
             ),
             const SizedBox(
-              height: 16.0,
+              height: 20.0,
             ),
             SizedBox(
               width: 400,
@@ -92,23 +92,47 @@ class _SignInPageState extends State<SignInPage> {
               height: 16.0,
             ),
             ElevatedButton(
-                onPressed: () async {
-                  if(_formKey.currentState!.validate()){
-                    try{
-                      await FirebaseAuth.instance.signInWithEmailAndPassword(email: _emailController.text, password: _passwordController.text);
-                     _openHomePage(context);
-                    }catch(exeption){
-                      print('error during login: $exeption');
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      try {
+                        await FirebaseAuth.instance.signInWithEmailAndPassword(
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                        );
+                        _openHomePage(context);
+                      } catch (exception) {
+                        print('Error during login: $exception');
+                        // Display an alert with the error message
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Login Error'),
+                              content: Text(
+                                  'Invalid email or password. Please try again.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .pop(); // Close the dialog
+                                  },
+                                  child: Text('OK'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
                     }
-                  }
-                  
-
-                },
-                child: const Text(
-                  "Login",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
-                )),
+                  },
+                  child: const Text(
+                    "Login",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
             const SizedBox(height: 16.0),
             GestureDetector(
               onTap: () {

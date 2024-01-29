@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connect_friends/homePage.dart';
 import 'package:connect_friends/model/user_view_model.dart';
 import 'package:connect_friends/model/users_.dart';
+import 'package:connect_friends/onBording/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -76,6 +77,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              const SizedBox(
+                width: 400,
+                child: Column(
+                  children: [Text('Welcome to ConnectFriends, please sign up')],
+                ),
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
               SizedBox(
                 width: 400,
                 child: TextFormField(
@@ -206,7 +216,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.italic),
-                  ))
+                  )),
+              const SizedBox(
+                height: 16.0,
+              ),
+              ElevatedButton(
+                  onPressed: () async {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return const SignInPage();
+                    }));
+                  },
+                  child: const Text(
+                    'Login',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic),
+                  )),
             ],
           ),
         ),

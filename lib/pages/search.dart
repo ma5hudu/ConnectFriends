@@ -1,5 +1,6 @@
 import 'dart:html';
 
+import 'package:connect_friends/homePage.dart';
 import 'package:connect_friends/model/user_view_model.dart';
 import 'package:connect_friends/model/users_.dart';
 import 'package:connect_friends/pages/friend_profile.dart';
@@ -69,7 +70,8 @@ class _SearchUsersState extends State<SearchUsers> {
 
   getUsersNameStreamSnapshots() async {
     // Assuming liftsViewModel is an instance of LiftsViewModel
-    await Provider.of<UserViewMode>(context, listen: false).loadRegisterdUser();
+    await Provider.of<UserViewMode>(context, listen: false)
+        .loadRegisteredUser();
     setState(() {
       _allResults = Provider.of<UserViewMode>(context, listen: false).users;
     });
@@ -82,11 +84,18 @@ class _SearchUsersState extends State<SearchUsers> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Global Users"),
+        leading: IconButton(
+            icon: const Icon(Icons.home),
+            onPressed: () async {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return const HomePage();
+              }));
+            }),
         backgroundColor: Color.fromARGB(255, 64, 190, 195),
       ),
       body: Consumer<UserViewMode>(builder: (context, userModel, child) {
         if (userModel.users.isEmpty) {
-          userModel.loadRegisterdUser();
+          userModel.loadRegisteredUser();
           return const Center(
             child: CircularProgressIndicator(),
           );
@@ -116,12 +125,12 @@ class _SearchUsersState extends State<SearchUsers> {
                         final user = _resultsList[index];
                         return GestureDetector(
                           onTap: () {
-                             Navigator.of(context).push(
+                            Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) {
                                   return ChangeNotifierProvider(
                                     create: (context) => UserViewMode(),
-                                    child:  OtherUserProfile(selectedUser: user),
+                                    child: OtherUserProfile(selectedUser: user),
                                   );
                                 },
                               ),

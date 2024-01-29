@@ -6,14 +6,14 @@ import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class UserProfile extends StatefulWidget {
-  const UserProfile({super.key});
+class Profile extends StatefulWidget {
+  const Profile({super.key});
 
   @override
-  State<UserProfile> createState() => _UserProfileState();
+  State<Profile> createState() => _ProfileState();
 }
 
-class _UserProfileState extends State<UserProfile> {
+class _ProfileState extends State<Profile> {
   bool isInvitationAccepted = false;
 
   @override
@@ -94,6 +94,18 @@ class _UserProfileState extends State<UserProfile> {
                       ),
                     ),
                     const SizedBox(height: 20.0),
+                    ElevatedButton(
+                      onPressed: isInvitationAccepted
+                          ? null
+                          : () async {
+                              await userViewModel.inviteFriends
+                                  .acceptInvitation(currentUser);
+                              setState(() {
+                                isInvitationAccepted = true;
+                              });
+                            },
+                      child: const Text('Accept invitation'),
+                    ),
                   ],
                 ),
               ),

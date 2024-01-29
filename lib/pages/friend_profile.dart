@@ -14,15 +14,27 @@ class OtherUserProfile extends StatefulWidget {
 
 class _OtherUserProfileState extends State<OtherUserProfile> {
   UserViewMode userViewModel = UserViewMode();
+  bool isFriendRequestSent = false;
+  bool isFriendRequestAccepeted = false;
 
   @override
   void initState() {
     super.initState();
     loadCurrentUser();
+    checkRequestStatus();
   }
 
   Future<void> loadCurrentUser() async {
     await userViewModel.loadUserDetails();
+  }
+
+  Future<void> checkRequestStatus() async {
+    Users currentUser = userViewModel.currentUser!;
+    String friendId = widget.selectedUser.uid;
+
+    isFriendRequestSent = currentUser.friendRequest.contains(friendId);
+    isFriendRequestAccepeted = currentUser.friendRequest.contains(friendId);
+    setState(() {});
   }
 
   @override
@@ -72,15 +84,26 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
                     Users currentUser = userViewModel.currentUser!;
                     String friendId = widget.selectedUser.uid;
 
-                    currentUser.friendRequest.add(friendId);
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(currentUser.uid)
-                        .update({
-                      'friendRequests': FieldValue.arrayUnion([friendId])
-                    });
+                      if (isFriendRequestSent && !isFriendRequestAccepeted) {
+                      // Accept the friend request
+                      await userViewModel.inviteFriends
+                          .acceptInvitation(currentUser);
+                      await checkRequestStatus();
+                    } else if (!isFriendRequestSent) {
+                      // Send a friend request
+                      await userViewModel.inviteFriends
+                          .sendFriendRequestWithNotification(
+                              currentUser, friendId);
+                      await checkRequestStatus();
+                    }
                   },
-                  child: const Text('Add friend'),
+                  child: Text(
+                    isFriendRequestSent
+                        ? (isFriendRequestAccepeted
+                            ? 'Request Sent'
+                            : 'Friends')
+                        : 'Add Friend',
+                  ),
                 ),
               ],
             ),

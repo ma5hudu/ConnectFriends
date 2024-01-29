@@ -1,6 +1,9 @@
 import 'package:connect_friends/model/user_view_model.dart';
+import 'package:connect_friends/onBording/login.dart';
 import 'package:connect_friends/pages/my_profile.dart';
+import 'package:connect_friends/pages/notifications.dart';
 import 'package:connect_friends/pages/search.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +20,14 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home Page'),
+        leading: IconButton(
+            icon: const Icon(Icons.login_outlined),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return const SignInPage();
+              }));
+            }),
         backgroundColor: Color.fromARGB(255, 64, 190, 195),
       ),
       body: Padding(
@@ -71,9 +82,18 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // Handle button 4
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ChangeNotifierProvider(
+                            create: (context) => UserViewMode(),
+                            child: const MyNotifications(),
+                          );
+                        },
+                      ),
+                    );
                   },
-                  child: Text('Logout'),
+                  child: Text('My Notifications'),
                 ),
               ],
             ),
