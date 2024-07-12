@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connect_friends/model/add_friend.dart';
+import 'package:connect_friends/model/friend_request_manager.dart';
 import 'package:connect_friends/model/users_.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,8 @@ class UserViewMode extends ChangeNotifier {
   Users? _currentUser;
   Users? get currentUser => _currentUser;
 
-  InviteFriends _inviteFriends = InviteFriends();
-  InviteFriends get inviteFriends => _inviteFriends;
+  final FriendRequestManager _requestManager = FriendRequestManager();
+  FriendRequestManager get requestManager => _requestManager;
 
   Future<void> loadUserDetails({String? userId}) async {
     try {
@@ -33,12 +34,12 @@ class UserViewMode extends ChangeNotifier {
               surname: data['surname'] as String,
               email: data['email'] as String,
               profilePicture: data['profilePicture'] as String,
-              friendRequest:
-                  (data['friendRequest'] as List<dynamic>?)?.cast<String>() ??
-                      [],
-              acceptedFriendRequest:
-                  (data['acceptedFriends'] as List<dynamic>?)?.cast<String>() ??
-                      [],
+              // friendRequest:
+              //     (data['friendRequest'] as List<dynamic>?)?.cast<String>() ??
+              //         [],
+              // acceptedFriendRequest:
+              //     (data['acceptedFriends'] as List<dynamic>?)?.cast<String>() ??
+              //         [],
             )
           ];
           _currentUser = _user.first;
@@ -69,10 +70,10 @@ class UserViewMode extends ChangeNotifier {
           surname: data['surname'] as String,
           email: data['email'] as String,
           profilePicture: data['profilePicture'] as String,
-          friendRequest:
-              (data['friendRequest'] as List<dynamic>?)?.cast<String>() ?? [],
-          acceptedFriendRequest:
-              (data['acceptedFriends'] as List<dynamic>?)?.cast<String>() ?? [],
+          // friendRequest:
+          //     (data['friendRequest'] as List<dynamic>?)?.cast<String>() ?? [],
+          // acceptedFriendRequest:
+          //     (data['acceptedFriends'] as List<dynamic>?)?.cast<String>() ?? [],
         );
       }).toList();
       notifyListeners();

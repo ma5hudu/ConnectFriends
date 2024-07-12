@@ -19,11 +19,6 @@ class _MyNotificationsState extends State<MyNotifications> {
   void initState() {
     super.initState();
     userViewModel = Provider.of<UserViewMode>(context, listen: false);
-    loadCurrentUser();
-  }
-
-  Future<void> loadCurrentUser() async {
-    await userViewModel.loadUserDetails();
   }
 
   @override
@@ -33,18 +28,29 @@ class _MyNotificationsState extends State<MyNotifications> {
         title: const Text('Notifications'),
         backgroundColor: Color.fromARGB(255, 64, 190, 195),
       ),
-      body: Consumer<UserViewMode>(
-        builder: (context, userViewModel, child) {
-          Users? currentUser = userViewModel.currentUser;
-
-          if (currentUser == null) {
-            print('currentUser is null');
-            // You may want to show a loading indicator or handle the case where user details are not loaded yet.
+      body: FutureBuilder<void>(
+        future: userViewModel.loadUserDetails(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
-          }
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error loading user details'));
+          } else {
+            return Consumer<UserViewMode>(
+              builder: (context, userViewModel, child) {
+                Users? currentUser = userViewModel.currentUser;
 
-          return NotificationList(
-              userViewModel: userViewModel, currentUser: currentUser);
+                if (currentUser == null) {
+                  print('currentUser is null');
+                  // show a loading indicator or handle the case where user details are not loaded yet.
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                return NotificationList(
+                    userViewModel: userViewModel, currentUser: currentUser);
+              },
+            );
+          }
         },
       ),
     );
@@ -65,7 +71,7 @@ class NotificationList extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
       future:
-          userViewModel.inviteFriends.getNotificationMessages(currentUser.uid),
+          userViewModel.requestManager.getNotificationMessages(currentUser.uid),
       builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
@@ -76,7 +82,7 @@ class NotificationList extends StatelessWidget {
                 var data = notifications[index];
                 return GestureDetector(
                   onTap: () {
-                     Navigator.of(context).push(
+                    Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) {
                           return ChangeNotifierProvider(
@@ -89,17 +95,17 @@ class NotificationList extends StatelessWidget {
                   },
                   child: MouseRegion(
                     cursor: SystemMouseCursors.click,
-                  child: Card(
-                    margin:
-                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    child: ListTile(
-                      title: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(data['message'] ?? ''),
+                    child: Card(
+                      margin:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                      child: ListTile(
+                        title: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(data['message'] ?? ''),
+                        ),
                       ),
                     ),
                   ),
-                  )
                 );
               },
             );

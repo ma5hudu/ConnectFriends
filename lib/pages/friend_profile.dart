@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connect_friends/model/user_view_model.dart';
 import 'package:connect_friends/model/users_.dart';
+import 'package:connect_friends/model/friend_request.dart';
+import 'package:connect_friends/model/friend_request_manager.dart';
 import 'package:flutter/material.dart';
 
 class OtherUserProfile extends StatefulWidget {
@@ -14,14 +16,23 @@ class OtherUserProfile extends StatefulWidget {
 
 class _OtherUserProfileState extends State<OtherUserProfile> {
   UserViewMode userViewModel = UserViewMode();
+  FriendRequestManager friendRequestManager = FriendRequestManager();
   bool isFriendRequestSent = false;
-  bool isFriendRequestAccepeted = false;
+  bool isFriendRequestAccepted = false;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    loadCurrentUser();
-    checkRequestStatus();
+    initializeProfile();
+  }
+
+  Future<void> initializeProfile() async {
+    await loadCurrentUser();
+    await checkRequestStatus();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> loadCurrentUser() async {
@@ -29,11 +40,12 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
   }
 
   Future<void> checkRequestStatus() async {
-    Users currentUser = userViewModel.currentUser!;
+    Users? currentUser = userViewModel.currentUser;
+    if (currentUser == null) return;
+
     String friendId = widget.selectedUser.uid;
 
-    isFriendRequestSent = currentUser.friendRequest.contains(friendId);
-    isFriendRequestAccepeted = currentUser.friendRequest.contains(friendId);
+    // Check if the friend request is sent or accepted
     setState(() {});
   }
 
@@ -84,27 +96,29 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
                     Users currentUser = userViewModel.currentUser!;
                     String friendId = widget.selectedUser.uid;
 
-                      if (isFriendRequestSent && !isFriendRequestAccepeted) {
+                    if (isFriendRequestSent && !isFriendRequestAccepted) {
                       // Accept the friend request
-                      await userViewModel.inviteFriends
-                          .acceptInvitation(currentUser);
+                      print('Accepting friend request...');
+                      await friendRequestManager.acceptFriendRequest(
+                          currentUser.uid, friendId);
                       await checkRequestStatus();
                     } else if (!isFriendRequestSent) {
                       // Send a friend request
-                      await userViewModel.inviteFriends
-                          .sendFriendRequestWithNotification(
-                              currentUser, friendId);
+                      print('Sending friend request...');
+                      await friendRequestManager.sendFriendRequest(
+                          currentUser, widget.selectedUser);
                       await checkRequestStatus();
                     }
                   },
                   child: Text(
                     isFriendRequestSent
-                        ? (isFriendRequestAccepeted
-                            ? 'Request Sent'
-                            : 'Friends')
+                        ? (isFriendRequestAccepted ? 'Request Sent' : 'Friends')
                         : 'Add Friend',
                   ),
                 ),
+                const SizedBox(height: 20.0),
+                ElevatedButton(
+                    onPressed: () async {}, child: const Text("Cancel request"))
               ],
             ),
           ),

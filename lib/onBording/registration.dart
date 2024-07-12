@@ -5,6 +5,7 @@ import 'package:connect_friends/model/users_.dart';
 import 'package:connect_friends/onBording/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -17,6 +18,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final ImagePicker _picker = ImagePicker();
+
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
@@ -30,6 +33,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       return const HomePage();
     }));
   }
+
+
+
 
   Future<void> _registerUser() async {
     if (_formKey.currentState!.validate()) {
@@ -48,8 +54,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             surname: _surnameController.text.trim(),
             email: _emailController.text.trim(),
             profilePicture: 'url_to_default_profile_picture',
-            friendRequest: [],
-            acceptedFriendRequest: []);
+            // friendRequest: [],
+            // acceptedFriendRequest: []
+            );
 
         // Store user data in Firestore
         await currentUser.storeUserData();
@@ -188,22 +195,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               const SizedBox(
                 height: 16.0,
               ),
-              ElevatedButton(
-                onPressed: () {},
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add_a_photo_outlined, size: 20.0),
-                    SizedBox(width: 8.0),
-                    Text(
-                      "Upload a picture",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.italic),
-                    ),
-                  ],
-                ),
-              ),
+              // ElevatedButton(
+              //   onPressed: () {},
+              //   child: const Row(
+              //     mainAxisSize: MainAxisSize.min,
+              //     children: [
+              //       Icon(Icons.add_a_photo_outlined, size: 20.0),
+              //       SizedBox(width: 8.0),
+              //       Text(
+              //         "Upload a picture",
+              //         style: TextStyle(
+              //             fontWeight: FontWeight.bold,
+              //             fontStyle: FontStyle.italic),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               const SizedBox(
                 height: 16.0,
               ),

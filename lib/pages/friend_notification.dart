@@ -94,18 +94,18 @@ class _ProfileState extends State<Profile> {
                       ),
                     ),
                     const SizedBox(height: 20.0),
-                    ElevatedButton(
-                      onPressed: isInvitationAccepted
-                          ? null
-                          : () async {
-                              await userViewModel.inviteFriends
-                                  .acceptInvitation(currentUser);
-                              setState(() {
-                                isInvitationAccepted = true;
-                              });
-                            },
-                      child: const Text('Accept invitation'),
-                    ),
+                    // ElevatedButton(
+                    //   onPressed: isInvitationAccepted
+                    //       ? null
+                    //       : () async {
+                    //           await userViewModel.inviteFriends
+                    //               .acceptInvitation(currentUser);
+                    //           setState(() {
+                    //             isInvitationAccepted = true;
+                    //           });
+                    //         },
+                    //   child: const Text('Accept invitation'),
+                    // ),
                   ],
                 ),
               ),

@@ -6,8 +6,8 @@ class Users {
   final String surname;
   final String email;
   final String profilePicture;
-  List<String> friendRequest = [];
-  List<String> acceptedFriendRequest =[];
+  // List<String> friendRequest = [];
+  // List<String> acceptedFriendRequest =[];
 
   Users(
       {required this.uid,
@@ -15,8 +15,8 @@ class Users {
       required this.surname,
       required this.email,
       required this.profilePicture,
-      required this.friendRequest,
-      required this.acceptedFriendRequest
+      // required this.friendRequest,
+      // required this.acceptedFriendRequest
       });
 
   Map<String, Object?> toJson() {
@@ -26,8 +26,8 @@ class Users {
       'surname': surname,
       'email': email,
       'profilePicture': profilePicture,
-      'friendRequest': friendRequest,
-      'acceptedFriends': acceptedFriendRequest
+      // 'friendRequest': friendRequest,
+      // 'acceptedFriends': acceptedFriendRequest
 
     };
   }

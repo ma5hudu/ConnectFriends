@@ -1,4 +1,43 @@
 # connect_friends
+    ConnectFriends is a social networking app that allows users to register, create profiles, view a global user list, send friend invitations, and manage their friends list. The app uses Firebase for authentication and Firestore for data storage
+
+Features
+   - User Registration and Profile Creation
+   - Global User List and Search
+   - Friend Invitation and Acceptance
+   - Email Verification
+
+Prerequisites
+    Flutter (latest version)
+    Firebase Account
+
+Setup
+    git clone git@github.com:ma5hudu/ConnectFriends.git
+
+you can also clone using https depending on how you set up your git on your computer
+    https://github.com/ma5hudu/ConnectFriends.git
+
+install dependecies
+    flutter pub get
+
+Configure Firebase:
+   - Go to the Firebase Console.
+   - Create a new project or use an existing project.
+
+Run the app:
+    flutter run 
+it will show all the connnected devices and you will choose one you want
+
+
+
+
+
+
+
+
+
+
+
 
 A new Flutter project.
 
