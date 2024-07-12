@@ -10,8 +10,8 @@ ConnectFriends is a social networking app that allows users to register, create 
 - Email Verification
 
 ## Prerequisites
-Flutter (latest version)
-Firebase Account
+    -Flutter (latest version)
+    -Firebase Account
 
 
 ## Setup
@@ -42,17 +42,17 @@ it will show all the connnected devices and you will choose one you want
 
 
 ## Usage
-1. **User registration and profile creation**
+ ## User registration and profile creation
     -navigate to registration screen
     -input name, surname, email and upload picture and then submit the form to create an account
     -check email for verification link and click it to complete the registration
 
-2. Global user list and search
+## Global user list and search
     -navigate to global users list screen
     -view the list of all registered users
     -use search bar to find specific users using the person (first name)
 
-3. Friend invitation
+## Friend invitation
     -navigate to the user profile by clicking the name of the person on the list
     -send a friend invitation to the selected user and then the user will recieve a notification
     -
