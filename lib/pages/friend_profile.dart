@@ -44,9 +44,19 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
     if (currentUser == null) return;
 
     String friendId = widget.selectedUser.uid;
+    bool requestSent =
+        await friendRequestManager.isRequestSent(currentUser.uid, friendId);
 
-    // Check if the friend request is sent or accepted
-    setState(() {});
+    // Check if the friend request is sent
+    // QuerySnapshot sentRequestSnapshot = await FirebaseFirestore.instance
+    //     .collection('friendRequests')
+    //     .where('requesterUid', isEqualTo: currentUser.uid)
+    //     .where('reciverUid', isEqualTo: friendId)
+    //     .get();
+
+    setState(() {
+      isFriendRequestSent = requestSent;
+    });
   }
 
   @override
@@ -107,18 +117,33 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
                       print('Sending friend request...');
                       await friendRequestManager.sendFriendRequest(
                           currentUser, widget.selectedUser);
+                      setState(() {
+                        isFriendRequestSent = true;
+                      });
                       await checkRequestStatus();
                     }
                   },
                   child: Text(
                     isFriendRequestSent
-                        ? (isFriendRequestAccepted ? 'Request Sent' : 'Friends')
+                        ? (isFriendRequestAccepted ? 'Friends' : 'Request Sent')
                         : 'Add Friend',
                   ),
                 ),
                 const SizedBox(height: 20.0),
-                ElevatedButton(
-                    onPressed: () async {}, child: const Text("Cancel request"))
+                isFriendRequestSent && !isFriendRequestAccepted
+                    ? ElevatedButton(
+                        onPressed: () async {
+                          // Cancel friend request
+                          await loadCurrentUser();
+                          Users currentUser = userViewModel.currentUser!;
+                          await friendRequestManager.cancelFriendRequest(
+                              currentUser.uid, widget.selectedUser.uid);
+                          setState(() {
+                            isFriendRequestSent = false;
+                          });
+                        },
+                        child: const Text("Cancel request"))
+                    : Container(),
               ],
             ),
           ),

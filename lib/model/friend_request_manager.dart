@@ -5,6 +5,8 @@ import 'package:connect_friends/model/friend_request.dart';
 import 'package:flutter/material.dart';
 
 class FriendRequestManager extends ChangeNotifier{
+   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   Future<void> sendFriendRequest(Users currentUser, Users selectedUser) async {
     try {
       FriendRequest friendRequest = FriendRequest(
@@ -14,7 +16,7 @@ class FriendRequestManager extends ChangeNotifier{
         requesterProfilePicture: currentUser.profilePicture,
         receiverUid: selectedUser.uid,
       );
-      await FirebaseFirestore.instance
+      await _firestore
           .collection('friendRequests')
           .add(friendRequest.toJson());
 
@@ -22,7 +24,7 @@ class FriendRequestManager extends ChangeNotifier{
 
       String notificationMessage =
           '${currentUser.name} sent you a friend request';
-      await FirebaseFirestore.instance.collection('notifications').add({
+      await _firestore.collection('notifications').add({
         'userId': selectedUser.uid,
         'message': notificationMessage,
         'timestamp': FieldValue.serverTimestamp(),
@@ -36,8 +38,7 @@ class FriendRequestManager extends ChangeNotifier{
    Future<List<Map<String, dynamic>>> getNotificationMessages(
       String userId) async {
     try {
-      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-          .instance
+      QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
           .collection('notifications')
           .where('userId', isEqualTo: userId)
           .orderBy('timestamp', descending: true)
@@ -52,6 +53,40 @@ class FriendRequestManager extends ChangeNotifier{
     }
   }
 
+    Future<bool> isRequestSent(String requesterUid, String receiverUid) async {
+    QuerySnapshot requestSnapshot = await _firestore
+        .collection('friendRequests')
+        .where('requesterUid', isEqualTo: requesterUid)
+        .where('receiverUid', isEqualTo: receiverUid)
+        .get();
+
+    return requestSnapshot.docs.isNotEmpty;
+  }
+
+ Future<void> cancelFriendRequest(
+      String requesterUid, String receiverUid) async {
+    // Delete friend request document
+    QuerySnapshot requestSnapshot = await _firestore
+        .collection('friendRequests')
+        .where('requesterUid', isEqualTo: requesterUid)
+        .where('receiverUid', isEqualTo: receiverUid)
+        .get();
+
+    for (DocumentSnapshot doc in requestSnapshot.docs) {
+      await _firestore.collection('friendRequests').doc(doc.id).delete();
+    }
+
+    // Delete related notifications
+    QuerySnapshot notificationSnapshot = await _firestore
+        .collection('notifications')
+        .where('requesterUid', isEqualTo: requesterUid)
+        .where('receiverUid', isEqualTo: receiverUid)
+        .get();
+
+    for (DocumentSnapshot doc in notificationSnapshot.docs) {
+      await _firestore.collection('notifications').doc(doc.id).delete();
+    }
+  }
   Future<void> acceptFriendRequest(
       String currentUserId, String requesterId) async {
     try {
@@ -62,7 +97,7 @@ class FriendRequestManager extends ChangeNotifier{
         'acceptedFriendRequest': FieldValue.arrayUnion([requesterId]),
         'friendRequest': FieldValue.arrayRemove([requesterId]),
       });
-      await FirebaseFirestore.instance
+      await _firestore
           .collection('users')
           .doc(requesterId)
           .update({
