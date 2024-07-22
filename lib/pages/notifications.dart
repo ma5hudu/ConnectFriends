@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connect_friends/model/user_view_model.dart';
 import 'package:connect_friends/model/users_.dart';
-import 'package:connect_friends/pages/friend_notification.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,28 +24,29 @@ class _MyNotificationsState extends State<MyNotifications> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Notifications'),
-        backgroundColor: Color.fromARGB(255, 64, 190, 195),
+        backgroundColor: const Color.fromARGB(255, 64, 190, 195),
       ),
       body: FutureBuilder<void>(
         future: userViewModel.loadUserDetails(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error loading user details'));
+            return const Center(child: Text('Error loading user details'));
           } else {
             return Consumer<UserViewMode>(
               builder: (context, userViewModel, child) {
                 Users? currentUser = userViewModel.currentUser;
 
                 if (currentUser == null) {
-                  print('currentUser is null');
-                  // show a loading indicator or handle the case where user details are not loaded yet.
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(
+                      child: Text('No user details available.'));
                 }
 
                 return NotificationList(
-                    userViewModel: userViewModel, currentUser: currentUser);
+                  userViewModel: userViewModel,
+                  currentUser: currentUser,
+                );
               },
             );
           }
@@ -67,53 +66,47 @@ class NotificationList extends StatelessWidget {
     required this.currentUser,
   }) : super(key: key);
 
+  /// Code within futureBuilder makes sure that the data is loaded
+  /// from database and once it is availabe it uses listview builder to display
+  /// each notification in a card.
+  /// If the future is loading an error or no data is found the user will get the message
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
       future:
           userViewModel.requestManager.getNotificationMessages(currentUser.uid),
       builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasData) {
-            List<Map<String, dynamic>> notifications = snapshot.data!;
-            return ListView.builder(
-              itemCount: notifications.length,
-              itemBuilder: (context, index) {
-                var data = notifications[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return ChangeNotifierProvider(
-                            create: (context) => UserViewMode(),
-                            child: const Profile(),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Card(
-                      margin:
-                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                      child: ListTile(
-                        title: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(data['message'] ?? ''),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
-          } else {
-            return Center(child: Text('No notifications available.'));
-          }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          print('Error in FutureBuilder: ${snapshot.error}');
+          return const Center(child: Text('Error loading notifications.'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No notifications available.'));
         } else {
-          return Center(child: CircularProgressIndicator());
+          List<Map<String, dynamic>> notifications = snapshot.data!;
+          print('Notifications loaded: ${notifications.length}');
+          notifications.forEach((notification) {
+            print('Notification: $notification');
+          });
+
+          return ListView.builder(
+            itemCount: notifications.length,
+            itemBuilder: (context, index) {
+              var data = notifications[index];
+              return Card(
+                margin:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: ListTile(
+                  title: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(data['message'] ?? 'No message'),
+                  ),
+                ),
+              );
+            },
+          );
         }
       },
     );

@@ -25,7 +25,8 @@ class FriendRequestManager extends ChangeNotifier{
       String notificationMessage =
           '${currentUser.name} sent you a friend request';
       await _firestore.collection('notifications').add({
-        'userId': selectedUser.uid,
+        'requesterUid': currentUser.uid,
+        'receiverUid': selectedUser.uid,
         'message': notificationMessage,
         'timestamp': FieldValue.serverTimestamp(),
       });
@@ -35,23 +36,25 @@ class FriendRequestManager extends ChangeNotifier{
     }
   }
 
-   Future<List<Map<String, dynamic>>> getNotificationMessages(
-      String userId) async {
-    try {
-      QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
-          .collection('notifications')
-          .where('userId', isEqualTo: userId)
-          .orderBy('timestamp', descending: true)
-          .get();
+ Future<List<Map<String, dynamic>>> getNotificationMessages(
+    String receiverUid) async {
+  try {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
+        .collection('notifications')
+        .where('receiverUid', isEqualTo: receiverUid)
+        .orderBy('timestamp', descending: true)
+        .get();
 
-      return snapshot.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
-          .toList();
-    } catch (e) {
-      print('Error loading notification messages: $e');
-      return []; // Handle the error appropriately
-    }
+    print('Botification fetched: ${snapshot.docs.length}');
+    return snapshot.docs
+        .map((doc) => doc.data() as Map<String, dynamic>)
+        .toList();
+  } catch (e) {
+    print('Error loading notification messages: $e');
+    return []; // Handle the error appropriately
   }
+}
+
 
     Future<bool> isRequestSent(String requesterUid, String receiverUid) async {
     QuerySnapshot requestSnapshot = await _firestore
@@ -65,7 +68,7 @@ class FriendRequestManager extends ChangeNotifier{
 
  Future<void> cancelFriendRequest(
       String requesterUid, String receiverUid) async {
-    // Delete friend request document
+    // Delete friend request document 
     QuerySnapshot requestSnapshot = await _firestore
         .collection('friendRequests')
         .where('requesterUid', isEqualTo: requesterUid)
@@ -76,7 +79,7 @@ class FriendRequestManager extends ChangeNotifier{
       await _firestore.collection('friendRequests').doc(doc.id).delete();
     }
 
-    // Delete related notifications
+    // Delete related notifications if the invitation is canceled
     QuerySnapshot notificationSnapshot = await _firestore
         .collection('notifications')
         .where('requesterUid', isEqualTo: requesterUid)

@@ -34,12 +34,6 @@ class UserViewMode extends ChangeNotifier {
               surname: data['surname'] as String,
               email: data['email'] as String,
               profilePicture: data['profilePicture'] as String,
-              // friendRequest:
-              //     (data['friendRequest'] as List<dynamic>?)?.cast<String>() ??
-              //         [],
-              // acceptedFriendRequest:
-              //     (data['acceptedFriends'] as List<dynamic>?)?.cast<String>() ??
-              //         [],
             )
           ];
           _currentUser = _user.first;
