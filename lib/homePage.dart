@@ -1,5 +1,6 @@
 import 'package:connect_friends/model/user_view_model.dart';
 import 'package:connect_friends/onBording/login.dart';
+import 'package:connect_friends/pages/friend_requests.dart';
 import 'package:connect_friends/pages/my_profile.dart';
 import 'package:connect_friends/pages/notifications.dart';
 import 'package:connect_friends/pages/search.dart';
@@ -76,9 +77,12 @@ class _HomePageState extends State<HomePage> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    // Handle button 3
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return const Requests();
+                    }));
                   },
-                  child: Text('Friends'),
+                  child: Text('Friend Request'),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -103,3 +107,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+_friendRequest(BuildContext context) {}
