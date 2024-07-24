@@ -1,69 +1,77 @@
 # connect_friends
 
 ## Description
+
 ConnectFriends is a social networking app that allows users to register, create profiles, view a global user list, send friend invitations, and manage their friends list. The app uses Firebase for authentication and Firestore for data storage
 
 ## Features
+
 - User Registration and Profile Creation
 - Global User List and Search
 - Friend Invitation and Acceptance
 - Email Verification
 
 ## Prerequisites
+
     -Flutter (latest version)
     -Firebase Account
 
-
 ## Setup
-1. **Clone the repo**    
-    ```sh
-    git clone git@github.com:ma5hudu/ConnectFriends.git
-    ```
+
+1. **Clone the repo**
+
+   ```sh
+   git clone git@github.com:ma5hudu/ConnectFriends.git
+   ```
 
 2. **install dependecies**
-    ```sh
-    flutter pub get
-    ```
+
+   ```sh
+   flutter pub get
+   ```
 
 3. **Configure Firebase:**
+
    - Go to the Firebase Console.
    - Create a new project or use an existing project.
    - Enable firebase Authentication and firestore database
-   - follow the instructions on the link to [add firebase into your project ](https://firebase.google.com/docs/flutter/setup?platform=ios) 
-
+   - follow the instructions on the link to [add firebase into your project ](https://firebase.google.com/docs/flutter/setup?platform=ios)
 
 4. **Run the app:**
-    ```sh
+   `sh
     flutter run
-    ``` 
-it will show all the connnected devices and you will choose one you want
- **OR**
- inside your project go to lib/main and then on top of void main() you will see **run|profile|debug** and click run if you are using vs code
-
+    `
+   it will show all the connnected devices and you will choose one you want
+   **OR**
+   inside your project go to lib/main and then on top of void main() you will see **run|profile|debug** and click run if you are using vs code
 
 ## Usage
- ## User registration and profile creation
+
+## User registration and profile creation
+
     -navigate to registration screen
     -input name, surname, email and upload picture and then submit the form to create an account
     -check email for verification link and click it to complete the registration
 
 ## Global user list and search
+
     -navigate to global users list screen
     -view the list of all registered users
     -use search bar to find specific users using the person (first name)
 
 ## Friend invitation
+
     -navigate to the user profile by clicking the name of the person on the list
     -send a friend invitation to the selected user and then the user will recieve a notification
+    -After sending the invitation the send add friend button changes to request sent, and cancel request button becomes visble
+    -You can cancel your invitation that has already been sent
+
+## Navigate to Friend Request page
+
+    -You can access friend requests through your notifications or on the homepage
+    -You will be able to see the list of people who sent request
+    -You can either accept or decline the request
     -
-
-
-
-
-
-
-
-
 
 A new Flutter project.
 
