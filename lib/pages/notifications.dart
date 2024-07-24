@@ -1,5 +1,6 @@
 import 'package:connect_friends/model/user_view_model.dart';
 import 'package:connect_friends/model/users_.dart';
+import 'package:connect_friends/pages/friend_requests.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -98,10 +99,24 @@ class NotificationList extends StatelessWidget {
               return Card(
                 margin:
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: ListTile(
-                  title: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(data['message'] ?? 'No message'),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ChangeNotifierProvider(
+                            create: (context) => UserViewMode(),
+                            child: const Requests(),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  child: ListTile(
+                    title: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(data['message'] ?? 'No message'),
+                    ),
                   ),
                 ),
               );

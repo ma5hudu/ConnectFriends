@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connect_friends/model/add_friend.dart';
+import 'package:connect_friends/model/friend_request.dart';
 import 'package:connect_friends/model/friend_request_manager.dart';
 import 'package:connect_friends/model/users_.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -64,16 +65,16 @@ class UserViewMode extends ChangeNotifier {
           surname: data['surname'] as String,
           email: data['email'] as String,
           profilePicture: data['profilePicture'] as String,
-          // friendRequest:
-          //     (data['friendRequest'] as List<dynamic>?)?.cast<String>() ?? [],
-          // acceptedFriendRequest:
-          //     (data['acceptedFriends'] as List<dynamic>?)?.cast<String>() ?? [],
         );
       }).toList();
       notifyListeners();
     } catch (exception) {
       print('Error loading users: $exception');
     }
+  }
+
+  Future<List<FriendRequest>> loadFriendRequest(String receiverUid){
+    return requestManager.loadFriendRequest(receiverUid);
   }
 }
 

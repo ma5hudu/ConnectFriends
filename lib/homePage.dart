@@ -77,10 +77,16 @@ class _HomePageState extends State<HomePage> {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) {
-                      return const Requests();
-                    }));
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ChangeNotifierProvider(
+                            create: (context) => UserViewMode(),
+                            child: const Requests(),
+                          );
+                        },
+                      ),
+                    );
                   },
                   child: Text('Friend Request'),
                 ),
@@ -108,4 +114,4 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-_friendRequest(BuildContext context) {}
+

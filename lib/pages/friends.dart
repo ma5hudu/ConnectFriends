@@ -1,115 +1,95 @@
-import 'package:connect_friends/model/user_view_model.dart';
-import 'package:connect_friends/model/users_.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+// import 'package:flutter/material.dart';
+// import 'package:provider/provider.dart';
+// import 'package:connect_friends/model/friend_request_manager.dart';
 
-class MyNotifications extends StatefulWidget {
-  const MyNotifications({Key? key}) : super(key: key);
+// class Requests extends StatefulWidget {
+//   const Requests({super.key});
 
-  @override
-  State<MyNotifications> createState() => _MyNotificationsState();
-}
+//   @override
+//   State<Requests> createState() => _RequestsState();
+// }
 
-class _MyNotificationsState extends State<MyNotifications> {
-  late UserViewMode userViewModel;
+// class _RequestsState extends State<Requests> {
+//   late FriendRequestManager _friendRequestManager;
+//   late String? _userId;
 
-  @override
-  void initState() {
-    super.initState();
-    userViewModel = Provider.of<UserViewMode>(context, listen: false);
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     _friendRequestManager =
+//         Provider.of<FriendRequestManager>(context, listen: false);
+//     _userId = FirebaseAuth.instance.currentUser?.uid;
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notifications'),
-        backgroundColor: const Color.fromARGB(255, 64, 190, 195),
-      ),
-      body: FutureBuilder<void>(
-        future: userViewModel.loadUserDetails(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(child: Text('Error loading user details'));
-          } else {
-            return Consumer<UserViewMode>(
-              builder: (context, userViewModel, child) {
-                Users? currentUser = userViewModel.currentUser;
-
-                if (currentUser == null) {
-                  return const Center(
-                      child: Text('No user details available.'));
-                }
-
-                return NotificationList(
-                  userViewModel: userViewModel,
-                  currentUser: currentUser,
-                );
-              },
-            );
-          }
-        },
-      ),
-    );
-  }
-}
-
-class NotificationList extends StatelessWidget {
-  final UserViewMode userViewModel;
-  final Users currentUser;
-
-  const NotificationList({
-    Key? key,
-    required this.userViewModel,
-    required this.currentUser,
-  }) : super(key: key);
-
-  /// Code within futureBuilder makes sure that the data is loaded
-  /// from database and once it is availabe it uses listview builder to display
-  /// each notification in a card.
-  /// If the future is loading an error or no data is found the user will get the message
-
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future:
-          userViewModel.requestManager.getNotificationMessages(currentUser.uid),
-      builder: (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          print('Error in FutureBuilder: ${snapshot.error}');
-          return const Center(child: Text('Error loading notifications.'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No notifications available.'));
-        } else {
-          List<Map<String, dynamic>> notifications = snapshot.data!;
-          print('Notifications loaded: ${notifications.length}');
-          notifications.forEach((notification) {
-            print('Notification: $notification');
-          });
-
-          return ListView.builder(
-            itemCount: notifications.length,
-            itemBuilder: (context, index) {
-              var data = notifications[index];
-              return Card(
-                margin:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: ListTile(
-                  title: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(data['message'] ?? 'No message'),
-                  ),
-                ),
-              );
-            },
-          );
-        }
-      },
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Friend Requests'),
+//         backgroundColor: const Color.fromARGB(255, 64, 190, 195),
+//       ),
+//       body: _userId == null
+//           ? Center(child: Text('User not logged in'))
+//           : FutureBuilder<List<FriendRequest>>(
+//               future: _friendRequestManager.fetchFriendRequests(_userId!),
+//               builder: (context, snapshot) {
+//                 if (snapshot.connectionState == ConnectionState.waiting) {
+//                   return Center(child: CircularProgressIndicator());
+//                 } else if (snapshot.hasError) {
+//                   return Center(child: Text('Error loading friend requests.'));
+//                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+//                   return Center(child: Text('No friend requests available.'));
+//                 } else {
+//                   final friendRequests = snapshot.data!;
+//                   return ListView.builder(
+//                     itemCount: friendRequests.length,
+//                     itemBuilder: (context, index) {
+//                       final request = friendRequests[index];
+//                       return Card(
+//                         child: ListTile(
+//                           leading: const Icon(Icons.person_rounded),
+//                           title: Text(
+//                               '${request.requesterName} ${request.requesterSurname}'),
+//                           subtitle: Column(
+//                             crossAxisAlignment: CrossAxisAlignment.start,
+//                             children: [
+//                               const SizedBox(height: 4.0),
+//                               Row(
+//                                 children: [
+//                                   ElevatedButton(
+//                                     onPressed: () {
+//                                       // Handle accept request
+//                                     },
+//                                     child: const Text(
+//                                       'Accept request',
+//                                       style: TextStyle(
+//                                         fontWeight: FontWeight.bold,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                   const SizedBox(width: 8.0),
+//                                   ElevatedButton(
+//                                     onPressed: () {
+//                                       // Handle decline request
+//                                     },
+//                                     child: const Text(
+//                                       'Decline request',
+//                                       style: TextStyle(
+//                                         fontWeight: FontWeight.bold,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+//                       );
+//                     },
+//                   );
+//                 }
+//               },
+//             ),
+//     );
+//   }
+// }

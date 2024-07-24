@@ -1,4 +1,7 @@
+import 'package:connect_friends/model/friend_request.dart';
 import 'package:connect_friends/model/friend_request_manager.dart';
+import 'package:connect_friends/model/user_view_model.dart';
+import 'package:connect_friends/model/users_.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,14 +13,13 @@ class Requests extends StatefulWidget {
 }
 
 class _RequestsState extends State<Requests> {
- 
+  late UserViewMode userViewModel;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-  
+    userViewModel = Provider.of<UserViewMode>(context, listen: false);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -26,44 +28,63 @@ class _RequestsState extends State<Requests> {
         title: const Text('Friend Requests'),
         backgroundColor: const Color.fromARGB(255, 64, 190, 195),
       ),
-      body: ListView(
-        children: <Widget>[
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.person_rounded),
-              title: const Text('Mashudu Mphaphuli'),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 4.0),
-                  Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: const Text(
-                          'Accept request',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+      body: Consumer<UserViewMode>(
+        builder: (context, userViewModel, child) {
+          final currentUser = userViewModel.currentUser;
+
+          if (currentUser == null) {
+            userViewModel.loadUserDetails();
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          return FutureBuilder<List<FriendRequest>>(
+            future:
+                userViewModel.requestManager.loadFriendRequest(currentUser.uid),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return const Center(
+                    child: Text('Error loading friend requests'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(
+                    child: Text('No friend requests available.'));
+              } else {
+                final friendRequests = snapshot.data!;
+                return ListView.builder(
+                  itemCount: friendRequests.length,
+                  itemBuilder: (context, index) {
+                    final request = friendRequests[index];
+                    return Card(
+                      child: ListTile(
+                        leading: const Icon(Icons.person_rounded),
+                        title: Text(
+                            '${request.requesterName} ${request.requesterSurname}'),
+                        subtitle: Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                // Handle accept friend request
+                              },
+                              child: const Text('Accept'),
+                            ),
+                            const SizedBox(width: 8.0),
+                            ElevatedButton(
+                              onPressed: () {
+                                // Handle decline friend request
+                              },
+                              child: const Text('Decline'),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 8.0),
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: const Text(
-                          'Decline request',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          )
-        ],
+                    );
+                  },
+                );
+              }
+            },
+          );
+        },
       ),
     );
   }
